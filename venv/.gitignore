@@ -1,0 +1,18 @@
+# Virtual environment (do not upload)
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Generated result files
+results/*.png
+results/*.jpg
+results/*.csv
+
+# OS files
+.DS_Store
+Thumbs.db
