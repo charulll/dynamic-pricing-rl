@@ -9,6 +9,8 @@ agent = QLearningAgent(
 
 episodes = 1000
 
+revenues = []
+
 for episode in range(episodes):
 
     state, _ = env.reset()
@@ -33,8 +35,18 @@ for episode in range(episodes):
 
         total_reward += reward
 
+    revenues.append(total_reward)
+
     if (episode + 1) % 100 == 0:
 
         print(
-    f"Episode {episode+1}, Revenue: {total_reward}"
+            f"Episode {episode + 1}, Revenue: {total_reward}"
+        )
+
+avg_revenue = sum(revenues) / len(revenues)
+
+print("\nTraining Complete")
+print(
+    f"Average Revenue across {episodes} episodes: "
+    f"{avg_revenue:.2f}"
 )
