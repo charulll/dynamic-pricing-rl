@@ -4,13 +4,11 @@ from collections import defaultdict
 
 class QLearningAgent:
 
-    def __init__(
-        self,
-        num_actions,
-        alpha=0.1,
-        gamma=0.95,
-        epsilon=0.1
-    ):
+    def __init__(self,
+                 num_actions,
+                 alpha=0.1,
+                 gamma=0.95,
+                 epsilon=0.1):
 
         self.num_actions = num_actions
         self.alpha = alpha
@@ -23,37 +21,24 @@ class QLearningAgent:
 
     def choose_action(self, state):
 
-        state = tuple(state.astype(int))
-
         if np.random.random() < self.epsilon:
-            return np.random.randint(
-                self.num_actions
-            )
+            return np.random.randint(self.num_actions)
 
-        return np.argmax(
-            self.q_table[state]
-        )
+        return np.argmax(self.q_table[state])
 
-    def update(
-        self,
-        state,
-        action,
-        reward,
-        next_state
-    ):
-
-        state = tuple(state.astype(int))
-        next_state = tuple(
-            next_state.astype(int)
-        )
+    def update(self,
+               state,
+               action,
+               reward,
+               next_state):
 
         best_next_action = np.argmax(
             self.q_table[next_state]
         )
 
         td_target = (
-            reward
-            + self.gamma *
+            reward +
+            self.gamma *
             self.q_table[next_state][best_next_action]
         )
 
