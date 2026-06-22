@@ -1,5 +1,8 @@
 from src.environment import DynamicPricingEnv
 from baseline_agents import FixedPriceAgent, DiscountAgent
+from src.q_learning import QLearningAgent
+import pickle
+
 
 def evaluate_agent(agent, env, episodes=100):
 
@@ -27,11 +30,24 @@ def evaluate_agent(agent, env, episodes=100):
 
 env = DynamicPricingEnv()
 
+# Fixed Agent
 fixed_agent = FixedPriceAgent()
-discount_agent = DiscountAgent()
-
 fixed_avg = evaluate_agent(fixed_agent, env)
+
+# Discount Agent
+discount_agent = DiscountAgent()
 discount_avg = evaluate_agent(discount_agent, env)
+
+# Q-Learning Agent
+q_agent = QLearningAgent(num_actions=env.action_space.n)
+
+with open("q_table.pkl", "rb") as f:
+    q_agent.q_table.update(pickle.load(f))
+
+q_agent.epsilon = 0
+
+q_avg = evaluate_agent(q_agent, env)
 
 print(f"Fixed Agent Avg Revenue: {fixed_avg:.2f}")
 print(f"Discount Agent Avg Revenue: {discount_avg:.2f}")
+print(f"Q-Learning Avg Revenue: {q_avg:.2f}")

@@ -1,6 +1,7 @@
 from environment import DynamicPricingEnv
 from q_learning import QLearningAgent
 import matplotlib.pyplot as plt
+import pickle
 
 # Create environment
 env = DynamicPricingEnv()
@@ -68,4 +69,11 @@ plt.title("Q-Learning Revenue Trend")
 
 plt.grid(True)
 
+with open("q_table.pkl", "wb") as f:
+    pickle.dump(dict(agent.q_table), f)
+
+print("Q-table saved successfully!")
+
 plt.show()
+
+
