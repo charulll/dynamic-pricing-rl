@@ -1,5 +1,7 @@
+import random
 import torch
 import torch.nn as nn
+from collections import deque, namedtuple
 
 
 class QNetwork(nn.Module):
@@ -43,3 +45,80 @@ class QNetwork(nn.Module):
         """
 
         return self.network(x)
+
+
+# Named tuple for storing individual transitions cleanly
+Transition = namedtuple(
+    "Transition",
+    ["state", "action", "reward", "next_state", "done"]
+)
+
+
+class ReplayBuffer:
+    """
+    Fixed-capacity experience replay buffer backed by a collections.deque.
+
+    When the buffer is full, the oldest transition is automatically evicted
+    to make room for the new one (deque maxlen behaviour).
+
+    Args:
+        capacity (int): Maximum number of transitions to store.
+    """
+
+    def __init__(self, capacity: int):
+
+        self.buffer = deque(maxlen=capacity)
+
+    def push(
+        self,
+        state,
+        action: int,
+        reward: float,
+        next_state,
+        done: bool,
+    ) -> None:
+        """
+        Save a single transition to the buffer.
+
+        Args:
+            state:      np.ndarray — current environment state.
+            action:     int        — action taken.
+            reward:     float      — reward received.
+            next_state: np.ndarray — resulting environment state.
+            done:       bool       — whether the episode ended.
+        """
+
+        self.buffer.append(
+            Transition(state, action, reward, next_state, done)
+        )
+
+    def sample(self, batch_size: int):
+        """
+        Randomly sample a batch of transitions without replacement.
+
+        Args:
+            batch_size (int): Number of transitions to sample.
+
+        Returns:
+            Transition: A namedtuple whose fields are each a list of
+                        length batch_size, ready for conversion to tensors.
+
+        Raises:
+            ValueError: If batch_size exceeds the current buffer length.
+        """
+
+        if batch_size > len(self.buffer):
+            raise ValueError(
+                f"Cannot sample {batch_size} transitions from a buffer "
+                f"of size {len(self.buffer)}."
+            )
+
+        transitions = random.sample(self.buffer, batch_size)
+
+        # Unzip list-of-Transitions into a single Transition-of-lists
+        return Transition(*zip(*transitions))
+
+    def __len__(self) -> int:
+        """Return the current number of stored transitions."""
+
+        return len(self.buffer)
