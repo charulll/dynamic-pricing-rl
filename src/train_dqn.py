@@ -1,4 +1,4 @@
-﻿"""
+"""
 train_dqn.py — Week 3 DQN Training Script
 ==========================================
 Run from inside the src/ directory:
@@ -37,7 +37,7 @@ EPSILON_DECAY     = 0.995  # multiplicative decay per learn() call
 TARGET_UPDATE_FREQ = 10    # sync target net every N episodes
 PRINT_EVERY       = 50     # console log interval
 SAVE_PATH         = os.path.join(
-    os.path.dirname(__file__), "..", "results", "dqn_weights.pth"
+    os.path.abspath(os.path.dirname(__file__)), "..", "results", "dqn_weights.pth"
 )
 
 # ---------------------------------------------------------------------------
@@ -55,7 +55,7 @@ agent = DQNAgent(
     epsilon_decay     = EPSILON_DECAY,
     buffer_capacity   = BUFFER_CAPACITY,
     batch_size        = BATCH_SIZE,
-    target_update_freq= TARGET_UPDATE_FREQ,
+    target_update_freq = TARGET_UPDATE_FREQ,
 )
 
 print(f"Training DQN for {EPISODES} episodes on device: {agent.device}\n")
@@ -109,7 +109,7 @@ for episode in range(1, EPISODES + 1):
 # Final stats
 # ---------------------------------------------------------------------------
 overall_avg = sum(revenues) / len(revenues)
-print(f"\nTraining Complete")
+print("\nTraining Complete")
 print(f"Average Revenue across {EPISODES} episodes: {overall_avg:.2f}")
 
 # ---------------------------------------------------------------------------
@@ -122,13 +122,17 @@ print(f"Model weights saved → {SAVE_PATH}")
 # ---------------------------------------------------------------------------
 # Revenue curve
 # ---------------------------------------------------------------------------
-# Smooth the raw curve with a rolling window for readability
+# Smooth the raw curve with a rolling window for readability (O(n) pass)
 WINDOW = 20
-rolling_avg = [
-    sum(revenues[max(0, i - WINDOW):i + 1]) /
-    len(revenues[max(0, i - WINDOW):i + 1])
-    for i in range(len(revenues))
-]
+rolling_avg = []
+running_sum = 0.0
+
+for i, rev in enumerate(revenues):
+    running_sum += rev
+    if i >= WINDOW:
+        running_sum -= revenues[i - WINDOW]
+    window_len = min(i + 1, WINDOW)
+    rolling_avg.append(running_sum / window_len)
 
 plt.figure(figsize=(10, 5))
 plt.plot(revenues, alpha=0.3, color="steelblue", label="Episode Revenue")

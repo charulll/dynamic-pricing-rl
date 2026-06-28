@@ -1,5 +1,18 @@
+"""
+dqn_agent.py — Week 3: Deep Q-Network components
+=================================================
+Contains three classes built on top of the DynamicPricingEnv (Week 1):
+
+    QNetwork     — PyTorch neural network mapping state -> Q-values.
+    ReplayBuffer — Fixed-capacity experience replay buffer.
+    DQNAgent     — Full DQN agent satisfying the evaluate_agent() contract
+                   defined in compare_agents.py.
+"""
+
 import copy
 import random
+from typing import Optional
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -241,7 +254,14 @@ class DQNAgent:
     ) -> None:
         """
         Push one transition into the replay buffer.
-        Called once per environment step during training.
+        Called once per environment step during the training loop.
+
+        Args:
+            state:      np.ndarray — current environment state.
+            action:     int        — action taken.
+            reward:     float      — reward received.
+            next_state: np.ndarray — resulting environment state.
+            done:       bool       — whether the episode ended.
         """
 
         self.buffer.push(state, action, reward, next_state, done)
@@ -250,7 +270,7 @@ class DQNAgent:
     # Training step
     # ------------------------------------------------------------------
 
-    def learn(self) -> float | None:
+    def learn(self) -> Optional[float]:
         """
         Sample a minibatch from the replay buffer and perform one
         gradient-descent step on the policy network.
@@ -351,7 +371,8 @@ class DQNAgent:
         """
 
         self.policy_net.load_state_dict(
-            torch.load(path, map_location=self.device)
+            # weights_only=True avoids the FutureWarning in PyTorch >= 2.0
+            torch.load(path, map_location=self.device, weights_only=True)
         )
         # Keep the target net in sync with the loaded weights
         self.update_target()
