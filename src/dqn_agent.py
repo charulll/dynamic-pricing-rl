@@ -36,7 +36,7 @@ class QNetwork(nn.Module):
                            Matches the environment action space (5).
     """
 
-    def __init__(self, state_dim: int = 2, num_actions: int = 5):
+    def __init__(self, state_dim: int = 3, num_actions: int = 5):
 
         super().__init__()
 

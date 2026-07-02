@@ -21,11 +21,34 @@ class QLearningAgent:
             lambda: np.zeros(num_actions)
         )
 
+    # ----------------------------
+    # Convert continuous state into
+    # discrete buckets
+    # ----------------------------
+    def discretize_state(self, state):
+
+        inventory = int(state[0] * 10)
+        days = int(state[1] * 10)
+        demand = int(state[2] * 10)
+
+        inventory = min(inventory, 9)
+        days = min(days, 9)
+        demand = min(demand, 9)
+
+        return (
+            inventory,
+            days,
+            demand
+        )
+
+    # ----------------------------
+
     def choose_action(self, state):
 
-        state = tuple(state.astype(int))
+        state = self.discretize_state(state)
 
         if np.random.random() < self.epsilon:
+
             return np.random.randint(
                 self.num_actions
             )
@@ -33,6 +56,8 @@ class QLearningAgent:
         return np.argmax(
             self.q_table[state]
         )
+
+    # ----------------------------
 
     def update(
         self,
@@ -42,9 +67,10 @@ class QLearningAgent:
         next_state
     ):
 
-        state = tuple(state.astype(int))
-        next_state = tuple(
-            next_state.astype(int)
+        state = self.discretize_state(state)
+
+        next_state = self.discretize_state(
+            next_state
         )
 
         best_next_action = np.argmax(

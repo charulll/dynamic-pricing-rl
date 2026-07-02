@@ -17,6 +17,7 @@ Pre-requisites:
 """
 
 import pickle
+import matplotlib.pyplot as plt
 
 from src.environment import DynamicPricingEnv
 from baseline_agents import FixedPriceAgent, DiscountAgent
@@ -24,7 +25,7 @@ from src.q_learning import QLearningAgent
 from src.dqn_agent import DQNAgent
 
 
-def evaluate_agent(agent, env, episodes=100):
+def evaluate_agent(agent, env, episodes=1000):
 
     revenues = []
 
@@ -84,3 +85,34 @@ print(f"Fixed Agent Avg Revenue:    {fixed_avg:.2f}")
 print(f"Discount Agent Avg Revenue: {discount_avg:.2f}")
 print(f"Q-Learning Avg Revenue:     {q_avg:.2f}")
 print(f"DQN Agent Avg Revenue:      {dqn_avg:.2f}")
+# Revenue Comparison Graph
+
+agents = [
+    "Fixed",
+    "Discount",
+    "Q-Learning",
+    "DQN"
+]
+
+revenues = [
+    fixed_avg,
+    discount_avg,
+    q_avg,
+    dqn_avg
+]
+
+plt.figure(figsize=(8,5))
+
+plt.bar(agents, revenues)
+
+plt.title("Average Revenue Comparison")
+
+plt.xlabel("Agents")
+
+plt.ylabel("Average Revenue")
+
+plt.grid(axis="y")
+
+plt.savefig("results/revenue_comparison.png")
+
+plt.close()
