@@ -26,7 +26,7 @@ from dqn_agent import DQNAgent             # Week 3
 # ---------------------------------------------------------------------------
 # Hyperparameters
 # ---------------------------------------------------------------------------
-EPISODES          = 500    # total training episodes
+EPISODES          = 3000    # total training episodes
 BATCH_SIZE        = 64     # minibatch size for each learn() call
 BUFFER_CAPACITY   = 10_000 # replay buffer max transitions
 LR                = 1e-3   # Adam learning rate
@@ -144,4 +144,5 @@ plt.title("DQN Training — Revenue Curve")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
-plt.show()
+plt.savefig("results/reward_curve.png")
+plt.close()

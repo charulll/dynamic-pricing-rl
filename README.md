@@ -179,6 +179,6 @@ python compare_agents.py
 
 ## Contributors
 
-* Charul 
+* Charul Thakur
 * Pavitharan
 * Praveen Nandan
