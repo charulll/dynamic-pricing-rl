@@ -2,24 +2,25 @@
 
 ## Overview
 
-This project implements a Dynamic Pricing system for the Travel & Hospitality domain using Reinforcement Learning.
+This project implements a **Dynamic Pricing System** for the Travel & Hospitality domain using **Reinforcement Learning (RL)**.
 
 The objective is to maximize revenue by learning optimal pricing strategies while considering:
 
-* Limited inventory
-* Time remaining before departure/check-in
-* Customer demand uncertainty
-* Multiple pricing options
+- Limited inventory
+- Time remaining before departure/check-in
+- Customer demand uncertainty
+- Multiple pricing options
 
-The project is developed in phases:
+The project was completed in four phases:
 
-* Week 1: Custom Gym Environment Design
-* Week 2: Q-Learning Agent Implementation
-* Week 3: Deep Q-Network (DQN) Implementation
+- ✅ Week 1: Custom Gym Environment Design
+- ✅ Week 2: Q-Learning Agent Implementation
+- ✅ Week 3: Deep Q-Network (DQN) Implementation
+- ✅ Week 4: Agent Evaluation & Streamlit Dashboard
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```text
 dynamic-pricing-rl/
@@ -27,12 +28,17 @@ dynamic-pricing-rl/
 ├── src/
 │   ├── environment.py
 │   ├── q_learning.py
+│   ├── dqn_agent.py
 │   ├── train_qlearning.py
+│   ├── train_dqn.py
 │
 ├── baseline_agents.py
 ├── compare_agents.py
-├── requirements.txt
+├── inventory_curve.py
+├── price_trajectory.py
+├── dashboard.py
 ├── README.md
+├── requirements.txt
 │
 ├── data/
 └── results/
@@ -40,14 +46,14 @@ dynamic-pricing-rl/
 
 ---
 
-## Environment Design
+# Environment Design
 
-### State Space
+## State Space
 
 The environment state consists of:
 
-* Remaining Inventory
-* Days Left
+- Remaining Inventory
+- Days Left
 
 Example:
 
@@ -57,23 +63,23 @@ Example:
 
 ---
 
-### Action Space
+## Action Space
 
-Five discrete pricing actions are available:
+Five discrete pricing actions are available.
 
 | Action | Price |
-| ------ | ----- |
-| 0      | ₹80   |
-| 1      | ₹100  |
-| 2      | ₹120  |
-| 3      | ₹140  |
-| 4      | ₹160  |
+|--------|------:|
+| 0 | ₹80 |
+| 1 | ₹100 |
+| 2 | ₹120 |
+| 3 | ₹140 |
+| 4 | ₹160 |
 
 ---
 
-### Reward Function
+## Reward Function
 
-Revenue generated from sales:
+The reward is the revenue generated from ticket sales.
 
 ```text
 Reward = Price × Units Sold
@@ -81,69 +87,110 @@ Reward = Price × Units Sold
 
 ---
 
-### Demand Simulation
+## Demand Simulation
 
-Customer demand is stochastic and depends on:
+Customer demand is simulated based on:
 
-* Selected price
-* Time remaining
-* Random customer arrivals
+- Selected price
+- Remaining booking time
+- Random customer arrivals
 
-Demand decreases with higher prices and increases as the booking deadline approaches.
+Demand decreases as prices increase and generally rises as the booking deadline approaches.
+
+---
+
+# Algorithms Implemented
+
+## Fixed Price Agent
+
+Always charges a fixed price.
+
+---
+
+## Discount Agent
+
+Uses a rule-based pricing strategy:
+
+- ₹160 during early booking
+- ₹140 during mid booking
+- ₹100 near departure
 
 ---
 
 ## Q-Learning Agent
 
-The agent learns an optimal pricing policy using:
+Implemented using:
 
-* Q-Table
-* Epsilon-Greedy Exploration
-* Temporal Difference Learning
+- Q-Table
+- Epsilon-Greedy Policy
+- Temporal Difference Learning
 
-Q-Learning Update Rule:
+---
 
-```text
-Q(s,a) = Q(s,a) + α [ r + γ max Q(s',a') - Q(s,a) ]
+## Deep Q-Network (DQN)
+
+Implemented using:
+
+- Neural Network
+- Experience Replay
+- Target Network
+- Epsilon-Greedy Exploration
+
+---
+
+# Results
+
+The project compares four pricing strategies.
+
+| Agent | Average Revenue |
+|----------------|---------------:|
+| Fixed Pricing | 13000 |
+| Discount Pricing | 16029 |
+| Q-Learning | 9508 |
+| DQN | 13000 |
+
+*(Values may vary slightly because demand is randomly generated.)*
+
+---
+
+# Dashboard
+
+A Streamlit dashboard was developed to visualize project performance.
+
+The dashboard includes:
+
+- Agent Performance Summary
+- Revenue Comparison
+- DQN Reward Curve
+- Price Trajectory
+- Inventory Curve
+- Project Statistics
+
+Run the dashboard using:
+
+```bash
+streamlit run dashboard.py
 ```
 
 ---
 
-## Baseline Agents
+# Installation
 
-### Fixed Price Agent
+Create a virtual environment.
 
-Always selects:
-
-```text
-₹120
+```bash
+python -m venv venv
 ```
 
-### Discount Agent
+Activate it.
 
-Pricing strategy:
+Windows
 
-* ₹160 when demand horizon is large
-* ₹140 during mid-horizon
-* ₹100 near the deadline
+```bash
+venv\Scripts\activate
+```
 
----
-
-## Results
-
-### Baseline Comparison
-
-| Agent             | Average Revenue |
-| ----------------- | --------------: |
-| Fixed Price Agent |           12000 |
-| Discount Agent    |           15855 |
-| Q-Learning Agent  |            8232 |
-
-These results provide a benchmark for future DQN implementation and evaluation.
-
----
-
-## Installation
+Install dependencies.
 
 ```bash
 pip install -r requirements.txt
@@ -151,34 +198,60 @@ pip install -r requirements.txt
 
 ---
 
-## Run Q-Learning Training
+# Run the Project
+
+Train Q-Learning
 
 ```bash
 python src/train_qlearning.py
 ```
 
----
+Train DQN
 
-## Compare Pricing Strategies
+```bash
+python src/train_dqn.py
+```
+
+Compare all agents
 
 ```bash
 python compare_agents.py
 ```
 
+Generate Price Trajectory
+
+```bash
+python price_trajectory.py
+```
+
+Generate Inventory Curve
+
+```bash
+python inventory_curve.py
+```
+
+Launch Dashboard
+
+```bash
+streamlit run dashboard.py
+```
+
 ---
 
-## Future Work
+# Technologies Used
 
-* Deep Q-Network (DQN)
-* Experience Replay Buffer
-* Target Network
-* Hyperparameter Optimization
-* Revenue Performance Comparison
+- Python
+- Gymnasium
+- NumPy
+- Matplotlib
+- Pandas
+- PyTorch
+- Streamlit
 
 ---
 
-## Contributors
+# Contributors
 
-* Charul Thakur
-* Pavitharan
-* Praveen Nandan
+- Charul Thakur
+- Pavitharan
+- Praveen Nandan
